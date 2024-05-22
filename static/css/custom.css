@@ -1,0 +1,8 @@
+.plant-img {
+    width: 100%;
+    object-fit: contain;
+    border-radius: 5px;
+}
+.comment-col {
+    padding: 0 .5em;
+}

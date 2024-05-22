@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/custom.css') }}"
+        />
+        <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+        <!-- <script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+
+        <title>worg</title>
+    </head>
+    <body>
+        {% include 'header.html' %}
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h4>controlls</h4>
+                </div>
+                <div class="col-4">
+                    <h4>Comment</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <img
+                        src="{{ url_for('static', filename='images/placeholder.jpg') }}"
+                        class="plant-img"
+                        alt="..."
+                    />
+                </div>
+                <div class="col-4 comment-col">
+                    <textarea
+                        class="form-control"
+                        id="exampleFormControlTextarea1"
+                        style="height: 100%"
+                    >
+                        {% for actor in data['actions'] %}
+                        {{ actor }}
+                        {% for action in data['actions'][actor] %}
+                        {{ action }}
+                        {% endfor %}
+                        {% endfor %}
+                </textarea
+                    >
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">{% include 'chart.html' %}</div>
+            </div>
+        </div>
+    </body>
+</html>

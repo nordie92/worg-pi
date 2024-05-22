@@ -1,0 +1,187 @@
+<div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="offcanvasWithBackdrop"
+    aria-labelledby="offcanvasWithBackdropLabel"
+>
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBackdropLabel">
+            Settings
+        </h5>
+        <button
+            type="button"
+            class="btn-close text-reset"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+        ></button>
+    </div>
+    <div class="offcanvas-body">
+        <h2>Automation</h2>
+
+        <div class="mb-3">
+            <label for="inputLightOn" class="form-label">Light on</label>
+            <input type="text" class="form-control" id="inputLightOn" />
+            <div class="form-text">For example "06:00"</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputLightOff" class="form-label">Light off</label>
+            <input type="text" class="form-control" id="inputLightOff" />
+            <div class="form-text">For example "22:00"</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputVentilationOn" class="form-label"
+                >Ventilation on (°C)</label
+            >
+            <input type="text" class="form-control" id="inputVentilationOn" />
+            <div class="form-text">For example "25,0"</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputVentilationOff" class="form-label"
+                >Ventilation off (°C)</label
+            >
+            <input type="text" class="form-control" id="inputVentilationOff" />
+            <div class="form-text">For example "24,0"</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputBlowerOn" class="form-label">Blower on</label>
+            <input type="text" class="form-control" id="inputBlowerOn" />
+            <div class="form-text">
+                To simulate wind. For example "10:00, 14:00"
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputBlowerOff" class="form-label">Blower off</label>
+            <input type="text" class="form-control" id="inputBlowerOff" />
+            <div class="form-text">
+                To simulate wind. For example "12:00, 16:00"
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPumpOn" class="form-label"
+                >Pump on (soil humidity in %)</label
+            >
+            <input type="text" class="form-control" id="inputPumpOn" />
+            <div class="form-text">For example "50"</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPumpOnTime" class="form-label"
+                >Pump on time (in seconds)</label
+            >
+            <input type="text" class="form-control" id="inputPumpOnTime" />
+            <div class="form-text">For example "10"</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPumpPauseTime" class="form-label"
+                >Pump pause time (in minutes)</label
+            >
+            <input type="text" class="form-control" id="inputPumpPauseTime" />
+            <div class="form-text">For example "45"</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPictureCaptureTime" class="form-label"
+                >Picture capture time</label
+            >
+            <input
+                type="text"
+                class="form-control"
+                id="inputPictureCaptureTime"
+            />
+            <div class="form-text">For example "12:00"</div>
+        </div>
+
+        <h2>GPIO-Pins</h2>
+
+        <div class="mb-3">
+            <label for="inputLightPin" class="form-label">Light</label>
+            <select class="form-select" id="inputLightPin">
+                <option value="" selected></option>
+                {% for pin in pins %}
+                <option value="{{ pin }}">{{ pin }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputVentilationPin" class="form-label"
+                >Ventilation</label
+            >
+            <select class="form-select" id="inputVentilationPin">
+                <option value="" selected></option>
+                {% for pin in pins %}
+                <option value="{{ pin }}">{{ pin }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputBlowerPin" class="form-label">Blower</label>
+            <select class="form-select" id="inputBlowerPin">
+                <option value="" selected></option>
+                {% for pin in pins %}
+                <option value="{{ pin }}">{{ pin }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputDHTPin" class="form-label"
+                >Temparature/Humidity sensor (DHT11)</label
+            >
+            <select class="form-select" id="inputDHTPin">
+                <option value="" selected></option>
+                {% for pin in pins %}
+                <option value="{{ pin }}">{{ pin }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputSoilSensorPin" class="form-label"
+                >Soil humidity sensor</label
+            >
+            <select class="form-select" id="inputSoilSensorPin">
+                <option value="" selected></option>
+                {% for pin in pins %}
+                <option value="{{ pin }}">{{ pin }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPumpPin" class="form-label">Pump</label>
+            <select class="form-select" id="inputPumpPin">
+                <option value="" selected></option>
+                {% for pin in pins %}
+                <option value="{{ pin }}">{{ pin }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+<nav class="navbar navbar-light">
+    <div class="container-fluid">
+        <div>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasWithBackdrop"
+                aria-controls="offcanvasWithBackdrop"
+                aria-label="Toggle navigation"
+                style="margin-right: 15px"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">Worg</a>
+        </div>
+    </div>
+</nav>
