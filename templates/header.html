@@ -1,11 +1,18 @@
 <div
     class="offcanvas offcanvas-start"
     tabindex="-1"
-    id="offcanvasWithBackdrop"
-    aria-labelledby="offcanvasWithBackdropLabel"
+    id="offcanvas-with-backdrop"
+    aria-labelledby="offcanvas-with-backdrop-label"
 >
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasWithBackdropLabel">
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="save-settings-button"
+        >
+            Save
+        </button>
+        <h5 class="offcanvas-title" id="offcanvas-with-backdrop-label">
             Settings
         </h5>
         <button
@@ -19,81 +26,82 @@
         <h2>Automation</h2>
 
         <div class="mb-3">
-            <label for="inputLightOn" class="form-label">Light on</label>
-            <input type="text" class="form-control" id="inputLightOn" />
+            <label for="input-light-on" class="form-label">Light on</label>
+            <input type="text" class="form-control" id="input-light-on" ajax="true" />
             <div class="form-text">For example "06:00"</div>
         </div>
 
         <div class="mb-3">
-            <label for="inputLightOff" class="form-label">Light off</label>
-            <input type="text" class="form-control" id="inputLightOff" />
+            <label for="input-light-off" class="form-label">Light off</label>
+            <input type="text" class="form-control" id="input-light-off" ajax="true" />
             <div class="form-text">For example "22:00"</div>
         </div>
 
         <div class="mb-3">
-            <label for="inputVentilationOn" class="form-label"
+            <label for="input-fan-on" class="form-label"
                 >Ventilation on (°C)</label
             >
-            <input type="text" class="form-control" id="inputVentilationOn" />
-            <div class="form-text">For example "25,0"</div>
+            <input type="number" step=".1" min="0" max="100" class="form-control" id="input-fan-on" ajax="true" />
+            <div class="form-text">For example "25.0"</div>
         </div>
 
         <div class="mb-3">
-            <label for="inputVentilationOff" class="form-label"
+            <label for="input-fan-off" class="form-label"
                 >Ventilation off (°C)</label
             >
-            <input type="text" class="form-control" id="inputVentilationOff" />
-            <div class="form-text">For example "24,0"</div>
+            <input type="number" step=".1" min="0" max="100" class="form-control" id="input-fan-off" ajax="true" />
+            <div class="form-text">For example "24.0"</div>
         </div>
 
         <div class="mb-3">
-            <label for="inputBlowerOn" class="form-label">Blower on</label>
-            <input type="text" class="form-control" id="inputBlowerOn" />
+            <label for="input-wind-on" class="form-label">Wind on</label>
+            <input type="text" class="form-control" id="input-wind-on" ajax="true" />
             <div class="form-text">
                 To simulate wind. For example "10:00, 14:00"
             </div>
         </div>
 
         <div class="mb-3">
-            <label for="inputBlowerOff" class="form-label">Blower off</label>
-            <input type="text" class="form-control" id="inputBlowerOff" />
+            <label for="input-wind-off" class="form-label">Wind off</label>
+            <input type="text" class="form-control" id="input-wind-off" ajax="true" />
             <div class="form-text">
                 To simulate wind. For example "12:00, 16:00"
             </div>
         </div>
 
         <div class="mb-3">
-            <label for="inputPumpOn" class="form-label"
+            <label for="input-pump-on" class="form-label"
                 >Pump on (soil humidity in %)</label
             >
-            <input type="text" class="form-control" id="inputPumpOn" />
+            <input type="number" min="0" max="100" class="form-control" id="input-pump-on" ajax="true" />
             <div class="form-text">For example "50"</div>
         </div>
 
         <div class="mb-3">
-            <label for="inputPumpOnTime" class="form-label"
-                >Pump on time (in seconds)</label
+            <label for="input-pump-on-duration" class="form-label"
+                >Pump on duration (in seconds)</label
             >
-            <input type="text" class="form-control" id="inputPumpOnTime" />
+            <input type="number" class="form-control" id="input-pump-on-duration" ajax="true" />
             <div class="form-text">For example "10"</div>
         </div>
 
         <div class="mb-3">
-            <label for="inputPumpPauseTime" class="form-label"
+            <label for="input-pump-pause-time" class="form-label"
                 >Pump pause time (in minutes)</label
             >
-            <input type="text" class="form-control" id="inputPumpPauseTime" />
+            <input type="number" class="form-control" id="input-pump-pause-time" ajax="true" />
             <div class="form-text">For example "45"</div>
         </div>
 
         <div class="mb-3">
-            <label for="inputPictureCaptureTime" class="form-label"
+            <label for="input-picture-capture-time" class="form-label"
                 >Picture capture time</label
             >
             <input
                 type="text"
                 class="form-control"
-                id="inputPictureCaptureTime"
+                id="input-picture-capture-time"
+                ajax="true"
             />
             <div class="form-text">For example "12:00"</div>
         </div>
@@ -101,8 +109,8 @@
         <h2>GPIO-Pins</h2>
 
         <div class="mb-3">
-            <label for="inputLightPin" class="form-label">Light</label>
-            <select class="form-select" id="inputLightPin">
+            <label for="input-light-pin" class="form-label">Light</label>
+            <select class="form-select" id="input-light-pin" ajax="true">
                 <option value="" selected></option>
                 {% for pin in pins %}
                 <option value="{{ pin }}">{{ pin }}</option>
@@ -111,10 +119,10 @@
         </div>
 
         <div class="mb-3">
-            <label for="inputVentilationPin" class="form-label"
+            <label for="input-fan-pin" class="form-label"
                 >Ventilation</label
             >
-            <select class="form-select" id="inputVentilationPin">
+            <select class="form-select" id="input-fan-pin" ajax="true">
                 <option value="" selected></option>
                 {% for pin in pins %}
                 <option value="{{ pin }}">{{ pin }}</option>
@@ -123,8 +131,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="inputBlowerPin" class="form-label">Blower</label>
-            <select class="form-select" id="inputBlowerPin">
+            <label for="input-wind-pin" class="form-label">Wind</label>
+            <select class="form-select" id="input-wind-pin" ajax="true">
                 <option value="" selected></option>
                 {% for pin in pins %}
                 <option value="{{ pin }}">{{ pin }}</option>
@@ -133,10 +141,10 @@
         </div>
 
         <div class="mb-3">
-            <label for="inputDHTPin" class="form-label"
+            <label for="input-dht-pin" class="form-label"
                 >Temparature/Humidity sensor (DHT11)</label
             >
-            <select class="form-select" id="inputDHTPin">
+            <select class="form-select" id="input-dht-pin" ajax="true">
                 <option value="" selected></option>
                 {% for pin in pins %}
                 <option value="{{ pin }}">{{ pin }}</option>
@@ -145,10 +153,10 @@
         </div>
 
         <div class="mb-3">
-            <label for="inputSoilSensorPin" class="form-label"
+            <label for="input-soil-sensor-pin" class="form-label"
                 >Soil humidity sensor</label
             >
-            <select class="form-select" id="inputSoilSensorPin">
+            <select class="form-select" id="input-soil-sensor-pin" ajax="true">
                 <option value="" selected></option>
                 {% for pin in pins %}
                 <option value="{{ pin }}">{{ pin }}</option>
@@ -157,8 +165,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="inputPumpPin" class="form-label">Pump</label>
-            <select class="form-select" id="inputPumpPin">
+            <label for="input-pump-pin" class="form-label">Pump</label>
+            <select class="form-select" id="input-pump-pin" ajax="true">
                 <option value="" selected></option>
                 {% for pin in pins %}
                 <option value="{{ pin }}">{{ pin }}</option>
@@ -174,14 +182,68 @@
                 class="navbar-toggler"
                 type="button"
                 data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasWithBackdrop"
-                aria-controls="offcanvasWithBackdrop"
+                data-bs-target="#offcanvas-with-backdrop"
+                aria-controls="offcanvas-with-backdrop"
                 aria-label="Toggle navigation"
                 style="margin-right: 15px"
             >
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#">Worg</a>
+            <a class="navbar-brand" href="#">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" height="34" class="d-inline-block align-text-top">
+                Worg
+            </a>
         </div>
     </div>
 </nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const saveButton = document.getElementById("save-settings-button");
+        saveButton.addEventListener("click", function () {
+            // get all inputs and selects with attribute 'ajax' = true
+            const inputs = document.querySelectorAll("input[ajax=true], select[ajax=true]");
+            var payload = [];
+            inputs.forEach((input) => {
+                payload.push({
+                    name: input.id,
+                    value: input.value,
+                });
+            });
+            saveButton.textContent = "Saving...";
+            fetch("/settings", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            }).then((response) => {
+                if (response.ok) {
+                    saveButton.classList.remove("btn-primary");
+                    saveButton.classList.add("btn-success");
+                    saveButton.textContent = "Saved!";
+                    setTimeout(() => {
+                        saveButton.classList.remove("btn-success");
+                        saveButton.classList.add("btn-primary");
+                        saveButton.textContent = "Save";
+                    }, 2000);
+                } else {
+                    alert("Error saving settings")
+                }
+            })
+            ;
+        });
+
+        // fetch configs and set values
+        fetch("/settings")
+            .then((response) => response.json())
+            .then((data) => {
+                for (const [key, value] of Object.entries(data)) {
+                    const input = document.getElementById(key);
+                    if (input) {
+                        input.value = value;
+                    }
+                }
+            });
+    });
+</script>

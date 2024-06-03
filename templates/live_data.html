@@ -1,0 +1,51 @@
+<div class="live-data-container">
+    <span class="live-value-item"><img class="live-value-icon" src="{{ url_for('static', filename='images/temperature.png') }}"><span id="live-temperature">0 °C</span></span>
+    <span class="live-value-item"><img class="live-value-icon" src="{{ url_for('static', filename='images/humidity.png') }}"><span id="live-humidity">0 %</span></span>
+    <span class="live-value-item"><img class="live-value-icon" src="{{ url_for('static', filename='images/soil_moisture.png') }}"><span id="live-soil_moisture">0 %</span></span>
+    <span class="live-value-item"><img class="live-value-icon" src="{{ url_for('static', filename='images/light.png') }}"><span id="live-ligth">off</span></span>
+    <span class="live-value-item"><img class="live-value-icon" src="{{ url_for('static', filename='images/fan.png') }}"><span id="live-fan">off</span></span>
+    <span class="live-value-item"><img class="live-value-icon" src="{{ url_for('static', filename='images/wind.png') }}"><span id="live-wind">off</span></span>
+    <span class="live-value-item"><img class="live-value-icon" src="{{ url_for('static', filename='images/pump.png') }}"><span id="live-pump">off</span></span>
+
+    <script>
+        // window load
+        window.addEventListener('load', function() {
+            setInterval(function() {
+            // get the data from the server
+            fetch('/sensor_values')
+                .then(response => response.json())
+                .then(data => {
+                    // refresh live data
+                    document.getElementById('live-temperature').innerText = data.temperature + ' °C';
+                    document.getElementById('live-humidity').innerText = data.humidity + ' %';
+                    document.getElementById('live-soil_moisture').innerText = data.soil_moisture + ' %';
+                    document.getElementById('live-ligth').innerText = data.light ? 'on' : 'off';
+                    document.getElementById('live-fan').innerText = data.fan ? 'on' : 'off';
+                    document.getElementById('live-wind').innerText = data.wind ? 'on' : 'off';
+                    document.getElementById('live-pump').innerText = data.pump ? 'on' : 'off';
+
+                    if (data.fan === true) {
+                        document.getElementById('live-fan').classList.add('on');
+                    } else {
+                        document.getElementById('live-fan').classList.remove('on');
+                    }
+                    if (data.pump === true) {
+                        document.getElementById('live-pump').classList.add('on');
+                    } else {
+                        document.getElementById('live-pump').classList.remove('on');
+                    }
+                    if (data.wind === true) {
+                        document.getElementById('live-wind').classList.add('on');
+                    } else {
+                        document.getElementById('live-wind').classList.remove('on');
+                    }
+                    if (data.light === true) {
+                        document.getElementById('live-ligth').classList.add('on');
+                    } else {
+                        document.getElementById('live-ligth').classList.remove('on');
+                    }
+                });
+            }, 2000);
+        });
+    </script>
+</div>

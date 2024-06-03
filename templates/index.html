@@ -13,47 +13,59 @@
         />
         <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
-        <!-- <script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script> -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+        <script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/chartjs-adapter-moment.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/chartjs-plugin-annotation.js') }}"></script>
 
-        <title>worg</title>
+        <title>Worg</title>
     </head>
     <body>
         {% include 'header.html' %}
         <div class="container">
-            <div class="row">
-                <div class="col">
-                    <h4>controlls</h4>
-                </div>
-                <div class="col-4">
-                    <h4>Comment</h4>
-                </div>
+            <div class=""row>
+                {% include 'live_data.html' %}
             </div>
             <div class="row">
                 <div class="col">
                     <img
                         src="{{ url_for('static', filename='images/placeholder.jpg') }}"
                         class="plant-img"
-                        alt="..."
+                        id="plant-img"
+                        alt="No photo available"
                     />
                 </div>
                 <div class="col-4 comment-col">
+                    <div class="form-floating" style="height: 100%">
                     <textarea
                         class="form-control"
-                        id="exampleFormControlTextarea1"
+                        id="commentTextArea"
                         style="height: 100%"
-                    >
-                        {% for actor in data['actions'] %}
-                        {{ actor }}
-                        {% for action in data['actions'][actor] %}
-                        {{ action }}
-                        {% endfor %}
-                        {% endfor %}
-                </textarea
-                    >
+                    ></textarea>
+                <label for="commentTextArea">Comments</label>
+                </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col controlls d-flex justify-content-between align-items-center">
+                    <img class="icon-btn" id="fbackward" src="{{ url_for('static', filename='images/fbackward.png') }}">
+                    <img class="icon-btn" id="backward" src="{{ url_for('static', filename='images/backward.png') }}">
+                    <div class="input-group input-group-sm date-range-picker">
+                        <!-- <button type="button" id="btn-live" class="form-control" style="max-width: 100px">Live view</button> -->
+                        <input type="date" id="datepicker" value="{{today}}" class="form-control" style="max-width: 150px">
+                        <select id="duration-select" class="form-select" style="max-width: 120px">
+                            <option value="1">1 day</option>
+                            <option value="7" selected>1 week</option>
+                            <option value="14">2 weeks</option>
+                            <option value="30">1 month</option>
+                            <option value="60">2 months</option>
+                            <option value="90">3 months</option>
+                            <option value="182">6 months</option>
+                            <option value="364">12 months</option>
+                        </select>
+                    </div>
+                    <img class="icon-btn" id="forward" src="{{ url_for('static', filename='images/forward.png') }}">
+                    <img class="icon-btn" id="fforward" src="{{ url_for('static', filename='images/fforward.png') }}">
                 </div>
             </div>
             <div class="row">

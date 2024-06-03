@@ -21,7 +21,7 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 time TIMESTAMP NOT NULL,
                 actor TEXT NOT NULL,
-                state TEXT NOT NULL
+                state INTEGER NOT NULL
             )
         ''')
         db.execute('''
@@ -39,6 +39,14 @@ def insert_sensor_data(temperature, humidity, soil_humidity):
             INSERT INTO sensors (time, temperature, humidity, soil_humidity)
             VALUES (?, ?, ?, ?)
         ''', (datetime.now(), temperature, humidity, soil_humidity))
+        db.commit()
+
+def insert_action(actor, state, time=datetime.now()):
+    with sqlite3.connect(DATABASE) as db:
+        db.execute('''
+            INSERT INTO actions (time, actor, state)
+            VALUES (?, ?, ?)
+        ''', (time, actor, state))
         db.commit()
 
 def fetch_latest_sensor_data():
@@ -64,6 +72,7 @@ def fetch_sensor_data(dt_from, dt_to):
         return rows
 
 def fetch_average_sensor_data_per_day(dt_from, dt_to):
+    dt_to = dt_to + timedelta(days=1)
     with sqlite3.connect(DATABASE) as db:
         cursor = db.execute('''
             SELECT strftime('%Y-%m-%dT00:00:00', time) as time, AVG(temperature) as temperature, AVG(humidity) as humidity, AVG(soil_humidity) as soil_humidity
@@ -76,6 +85,9 @@ def fetch_average_sensor_data_per_day(dt_from, dt_to):
         return rows
 
 def fetch_average_sensor_data_per_hour(dt_from, dt_to):
+    dt_from = dt_from + timedelta(days=1)
+    dt_to = dt_to + timedelta(days=1)
+    print(dt_from, dt_to)
     with sqlite3.connect(DATABASE) as db:
         cursor = db.execute('''
             SELECT strftime('%Y-%m-%dT%H:00:00', time) as time, AVG(temperature) as temperature, AVG(humidity) as humidity, AVG(soil_humidity) as soil_humidity
@@ -134,14 +146,14 @@ def generate_example_data_actions(dt_from, dt_to):
             db.execute('''
                 INSERT INTO actions (time, actor, state)
                 VALUES (?, ?, ?)
-            ''', (light_on_time, 'light', 'on'))
+            ''', (light_on_time, 'light', True))
 
             # Light off at 22:00
             light_off_time = datetime.combine(current.date(), datetime.min.time()) + timedelta(hours=22)
             db.execute('''
                 INSERT INTO actions (time, actor, state)
                 VALUES (?, ?, ?)
-            ''', (light_off_time, 'light', 'off'))
+            ''', (light_off_time, 'light', False))
 
             # Pump on/off every 4 hours
             pump_time = datetime.combine(current.date(), datetime.min.time())
@@ -151,11 +163,25 @@ def generate_example_data_actions(dt_from, dt_to):
                 db.execute('''
                     INSERT INTO actions (time, actor, state)
                     VALUES (?, ?, ?)
-                ''', (pump_on_time, 'pump', 'on'))
+                ''', (pump_on_time, 'pump', True))
                 db.execute('''
                     INSERT INTO actions (time, actor, state)
                     VALUES (?, ?, ?)
-                ''', (pump_off_time, 'pump', 'off'))
+                ''', (pump_off_time, 'pump', False))
+            
+            # Fan on every 1-3 hours for 30 - 120 minutes
+            fan_time = datetime.combine(current.date(), datetime.min.time())
+            for i in range(8, 18, random.randint(2, 3)):
+                fan_on_time = fan_time + timedelta(hours=i)
+                fan_off_time = fan_on_time + timedelta(minutes=random.randint(30, 110))
+                db.execute('''
+                    INSERT INTO actions (time, actor, state)
+                    VALUES (?, ?, ?)
+                ''', (fan_on_time, 'fan', True))
+                db.execute('''
+                    INSERT INTO actions (time, actor, state)
+                    VALUES (?, ?, ?)
+                ''', (fan_off_time, 'fan', False))
             
             current += timedelta(days=1)
         db.commit()
@@ -191,5 +217,5 @@ if __name__ == "__main__":
         print('db inited')
     elif args.funktion == 'generate':
         print('generate example data for last 182 days...')
-        generate_example_data(datetime.now() - timedelta(days=182), datetime.now() + timedelta(days=1))
+        generate_example_data(datetime.now() - timedelta(days=182), datetime.now() - timedelta(days=1))
         print('example data generated')
