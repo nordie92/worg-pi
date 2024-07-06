@@ -93,9 +93,6 @@ class Hardware:
                 print('dht11:', temperature, humidity)
             except Exception as e:
                 print('Error reading sensors:', e)
-                self.temperature = 0
-                self.humidity = 0
-                self.soil_moisture = 0
             sleep(5)
     
     def read_dht11(self):
