@@ -27,20 +27,20 @@ class Util:
             if actor not in actors:
                 # if the actor is not in the dictionary, add it
                 actors[actor] = []
-                if state == '0':
+                if state == 0:
                     # if the actor is off, add a dummy entry
                     actors[actor].append({'dt_from': datetime.strftime(dt_from, '%Y-%m-%dT%H:%M:%S'), 'dt_to': time})
                 else:
                     actors[actor].append({'dt_from': time, 'dt_to': None})
             else:
-                if state == '1':
+                if state == 1:
                     if actors[actor][-1]['dt_to'] is None:
                         # if the actor is already on, remove the last entry
                         actors[actor].pop()
                     actors[actor].append({'dt_from': time, 'dt_to': None})
                 else:
                     actors[actor][-1]['dt_to'] = time
-        
+
         # check if some actor is still on
         for actor in actors:
             if actors[actor][-1]['dt_to'] is None:

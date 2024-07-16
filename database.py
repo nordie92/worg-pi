@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import random
 import argparse
 
@@ -109,6 +109,54 @@ def fetch_actions(dt_from, dt_to):
         rows = cursor.fetchall()
         return rows
 
+def fetch_actions_and_prepare(dt_from, dt_to):
+    dt_from = dt_from + timedelta(days=1)
+    dt_to = dt_to + timedelta(days=1)
+    with sqlite3.connect(DATABASE) as db:
+        cursor = db.execute('SELECT DISTINCT actor FROM actions')
+        actors = [row[0] for row in cursor.fetchall()]
+
+        actors_spans = {}
+
+        for actor in actors:
+            actors_spans[actor] = []
+            cursor = db.execute('''
+                SELECT strftime('%Y-%m-%dT%H:%M:%S', time) as time, state FROM actions
+                WHERE actor = ? and time BETWEEN ? AND ?
+                ORDER BY time
+            ''', (actor, dt_from, dt_to))
+            rows = cursor.fetchall()
+            if len(rows) == 0:
+                continue
+
+            spans = []
+            last_state = 0
+            for action in rows:
+                time = action[0]
+                state = action[1]
+
+                if last_state == 0 and state == 1:
+                    spans.append({'dt_from': time})
+                    last_state = 1
+                elif last_state == 1 and state == 0:
+                    spans[-1]['dt_to'] = time
+                    last_state = 0
+
+            if rows[0][1] == 0:
+                cursor = db.execute('''
+                    SELECT strftime('%Y-%m-%dT%H:%M:%S', time) as time, state FROM actions
+                    WHERE actor = ? and time < ? and state = 1
+                    ORDER BY time DESC
+                ''', (actor, dt_from))
+                row = cursor.fetchone()
+                spans.insert(0, {'dt_from': row[0], 'dt_to': rows[0][0]})
+            
+            if rows[-1][1] == 1:
+                spans[-1]['dt_to'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+            actors_spans[actor] = spans
+        return actors_spans
+
+
 def clear_db():
     with sqlite3.connect(DATABASE) as db:
         db.execute('DELETE FROM sensors')
@@ -203,7 +251,7 @@ def generate_example_data_comments(dt_from, dt_to):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Rufe Funktionen aus einem Python-Skript auf.')
-    parser.add_argument('funktion', choices=['clear', 'init', 'generate'], help='Die Funktion, die aufgerufen werden soll')
+    parser.add_argument('funktion', choices=['clear', 'init', 'generate', 'actions', 'prepared_actions'], help='Die Funktion, die aufgerufen werden soll')
 
     args = parser.parse_args()
 
@@ -219,3 +267,17 @@ if __name__ == "__main__":
         print('generate example data for last 182 days...')
         generate_example_data(datetime.now() - timedelta(days=182), datetime.now() - timedelta(days=1))
         print('example data generated')
+    elif args.funktion == 'actions':
+        import pprint
+        pprint.pprint(fetch_actions(datetime(2000, 1, 1), datetime(2030, 1, 1)))
+    elif args.funktion == 'prepared_actions':
+        from util import Util
+        import pprint
+        now = datetime.now()
+        # today = datetime.combine(now.date(), time.min)
+        today = now
+        today = today - timedelta(days=1)
+        tomorrow = today + timedelta(days=1)
+        print(f'From {today} to {tomorrow}')
+        pprint.pprint(Util.fetch_and_separete_actions(today, tomorrow))
+        pprint.pprint(fetch_actions_and_prepare(today, tomorrow))

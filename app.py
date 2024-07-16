@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from database import init_db, fetch_average_sensor_data_per_day, fetch_average_sensor_data_per_hour
+from database import init_db, fetch_average_sensor_data_per_day, fetch_average_sensor_data_per_hour, fetch_actions_and_prepare
 from util import Util, UIConfigs
 from datetime import datetime, timedelta, date
 from automation import Automation
@@ -67,8 +67,10 @@ def chart_data():
         data['sensors'] = fetch_average_sensor_data_per_hour(dt_from, dt_to)
     else:
         data['sensors'] = fetch_average_sensor_data_per_day(dt_from, dt_to)
-    data['actions'] = Util.fetch_and_separete_actions(dt_from, dt_to)
+    data['actions'] = fetch_actions_and_prepare(dt_from, dt_to)
+    import pprint
+    pprint.pprint(data['actions'])
     return jsonify(data)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='worg-pi.local', use_reloader=False)
+    app.run(debug=True, host='worg.local', use_reloader=False)
