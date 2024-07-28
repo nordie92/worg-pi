@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from database import init_db, fetch_average_sensor_data_per_day, fetch_average_sensor_data_per_hour, fetch_actions_and_prepare
+from database import init_db, fetch_average_sensor_data_per_day, fetch_average_sensor_data_per_hour, fetch_actions_and_prepare, insert_or_update_comment, get_comments_by_date
 from util import Util, UIConfigs
 from datetime import datetime, timedelta, date
 from automation import Automation
@@ -68,9 +68,21 @@ def chart_data():
     else:
         data['sensors'] = fetch_average_sensor_data_per_day(dt_from, dt_to)
     data['actions'] = fetch_actions_and_prepare(dt_from, dt_to)
-    import pprint
-    pprint.pprint(data['actions'])
     return jsonify(data)
+
+@app.route('/set_comment', methods=['PUT'])
+def set_comment():
+    data = request.get_json()
+    date = datetime.strptime(data.get('date'), '%Y-%m-%d')
+    comment = data.get('comment')
+    insert_or_update_comment(comment, date)
+    return 'OK', 200
+
+@app.route('/get_comment', methods=['GET'])
+def get_comment():
+    date = datetime.strptime(request.args.get('date'), '%Y-%m-%d')
+    comment = get_comments_by_date(date)
+    return comment
 
 if __name__ == '__main__':
     app.run(debug=True, host='worg.local', use_reloader=False)

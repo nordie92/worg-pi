@@ -87,7 +87,6 @@ def fetch_average_sensor_data_per_day(dt_from, dt_to):
 def fetch_average_sensor_data_per_hour(dt_from, dt_to):
     dt_from = dt_from + timedelta(days=1)
     dt_to = dt_to + timedelta(days=1)
-    print(dt_from, dt_to)
     with sqlite3.connect(DATABASE) as db:
         cursor = db.execute('''
             SELECT strftime('%Y-%m-%dT%H:00:00', time) as time, AVG(temperature) as temperature, AVG(humidity) as humidity, AVG(soil_humidity) as soil_humidity
@@ -130,7 +129,7 @@ def fetch_actions_and_prepare(dt_from, dt_to):
                 continue
 
             spans = []
-            last_state = 0
+            last_state = 1 if rows[0][1] == 0 else 0
             for action in rows:
                 time = action[0]
                 state = action[1]
@@ -138,8 +137,9 @@ def fetch_actions_and_prepare(dt_from, dt_to):
                 if last_state == 0 and state == 1:
                     spans.append({'dt_from': time})
                     last_state = 1
-                elif last_state == 1 and state == 0:
+                elif last_state == 1 and state == 0 and len(spans) > 0:
                     spans[-1]['dt_to'] = time
+                    print('____ add to date')
                     last_state = 0
 
             if rows[0][1] == 0:
@@ -149,12 +149,52 @@ def fetch_actions_and_prepare(dt_from, dt_to):
                     ORDER BY time DESC
                 ''', (actor, dt_from))
                 row = cursor.fetchone()
-                spans.insert(0, {'dt_from': row[0], 'dt_to': rows[0][0]})
+                if row:
+                    dt = datetime.strptime(rows[0][0], '%Y-%m-%dT%H:%M:%S')
+                    spans.insert(0, {'dt_from': row[0], 'dt_to': min(dt, dt_to)})
             
-            if rows[-1][1] == 1:
-                spans[-1]['dt_to'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+            if rows[-1][1] == 1 and len(spans) > 0:
+                spans[-1]['dt_to'] = min(datetime.now(), dt_to).strftime('%Y-%m-%dT%H:%M:%S')
             actors_spans[actor] = spans
         return actors_spans
+
+def insert_or_update_comment(comment, date=datetime.now().date()):
+    with sqlite3.connect(DATABASE) as db:
+        cursor = db.execute('''
+            SELECT id
+            FROM comments
+            WHERE date(date) = date(?)
+        ''', (date,))
+        existing_comment = cursor.fetchone()
+
+        if existing_comment:
+            # Update existing comment
+            db.execute('''
+                UPDATE comments
+                SET comment = ?
+                WHERE id = ?
+            ''', (comment, existing_comment[0]))
+        else:
+            # Insert new comment
+            db.execute('''
+                INSERT INTO comments (date, comment)
+                VALUES (?, ?)
+            ''', (date, comment))
+        
+        db.commit()
+
+def get_comments_by_date(target_date):
+    with sqlite3.connect(DATABASE) as db:
+        cursor = db.execute('''
+            SELECT id, date, comment
+            FROM comments
+            WHERE date(date) = date(?)
+        ''', (target_date,))
+        comments = cursor.fetchall()
+        if len(comments) > 0:
+            return comments[0][2]
+        else:
+            return ''
 
 
 def clear_db():
@@ -251,7 +291,7 @@ def generate_example_data_comments(dt_from, dt_to):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Rufe Funktionen aus einem Python-Skript auf.')
-    parser.add_argument('funktion', choices=['clear', 'init', 'generate', 'actions', 'prepared_actions'], help='Die Funktion, die aufgerufen werden soll')
+    parser.add_argument('funktion', choices=['clear', 'init', 'generate', 'actions', 'prepared_actions', 'clear_actions'], help='Die Funktion, die aufgerufen werden soll')
 
     args = parser.parse_args()
 
@@ -281,3 +321,6 @@ if __name__ == "__main__":
         print(f'From {today} to {tomorrow}')
         pprint.pprint(Util.fetch_and_separete_actions(today, tomorrow))
         pprint.pprint(fetch_actions_and_prepare(today, tomorrow))
+    elif args.funktion == 'clear_actions':
+        with sqlite3.connect(DATABASE) as db:
+            db.execute('DELETE FROM actions', ())

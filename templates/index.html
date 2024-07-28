@@ -74,3 +74,71 @@
         </div>
     </body>
 </html>
+
+<script>
+    window.addEventListener('load', function() {
+        const forwardBtn = document.getElementById("forward");
+        const backwardBtn = document.getElementById("backward");
+        const fforwardBtn = document.getElementById("fforward");
+        const fbackwardBtn = document.getElementById("fbackward");
+        const datepicker = document.getElementById("datepicker");
+        const textArea = document.getElementById('commentTextArea');
+
+        textArea.addEventListener('input', function(e) {
+            fetch(`/set_comment`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        date: datepicker.value,
+                        comment: textArea.value
+                    })})
+                .then((response) => response.json())
+                .then((data) => {
+
+                });
+        });
+
+        function fetch_comment() {
+            textArea.value = '';
+            fetch(`/get_comment?date=${datepicker.value}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text(); // Read the response as text first
+                })
+                .then((text) => {
+                    if (text) {
+                        try {
+                            textArea.value = text;
+                        } catch (error) {
+                            console.error('Error parsing JSON:', error);
+                        }
+                    } else {
+                        console.warn('Empty response');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Fetch error:', error);
+                });
+        }
+
+        forwardBtn.addEventListener("click", () => {
+            fetch_comment();
+        });
+        backwardBtn.addEventListener("click", () => {
+            fetch_comment();
+        });
+        fforwardBtn.addEventListener("click", () => {
+            fetch_comment();
+        });
+        fbackwardBtn.addEventListener("click", () => {
+            fetch_comment();
+        });
+        datepicker.addEventListener("change", () => {
+            fetch_comment();
+        });
+    });
+</script>
