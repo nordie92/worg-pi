@@ -11,6 +11,12 @@
         // window load
         window.addEventListener('load', function() {
             setInterval(function() {
+                updateLivedata();
+            }, 5000);
+            updateLivedata();
+        });
+
+        function updateLivedata() {
             // get the data from the server
             fetch('/sensor_values')
                 .then(response => response.json())
@@ -45,7 +51,6 @@
                         document.getElementById('live-ligth').classList.remove('on');
                     }
                 });
-            }, 10000);
-        });
+        }
     </script>
 </div>
